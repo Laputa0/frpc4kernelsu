@@ -1,10 +1,25 @@
 ASH_STANDALONE=1
 
-MODDIR=${0%/*}
-SERVE_BIN="${MODDIR}/bin/frpc"
-SERVE_CNF="${MODDIR}/bin/frpc.toml"
-SERVE_LOG="${MODDIR}/service.log"
-SERVE_PID="${MODDIR}/frpc.pid"
+MODPATH=${0%/*}
+SERVE_BIN="${MODPATH}/bin/frpc"
+SERVE_CNF="/data/local/frpc.conf/frpc.toml"
+SERVE_LOG="${MODPATH}/service.log"
+SERVE_PID="${MODPATH}/frpc.pid"
+
+# check service
+function status_service(){
+	if [ -f "$SERVE_PID" ]; then
+		PID=$(cat "$SERVE_PID")
+		if kill -0 "$PID" 2>/dev/null; then
+			return 0
+		else
+			rm -f "$SERVE_PID"
+			return 1
+		fi
+	else
+		return 1
+	fi
+}
 
 # start service
 function start_service(){
@@ -21,8 +36,15 @@ function start_service(){
 		fi
 	fi
 	echo "starting service..."
-	$SERVE_BIN --config $SERVE_CNF &> $SERVE_LOG &
-	echo $! > "$SERVE_PID"
+	for i in $(seq 90); do
+		if ! status_service &>/dev/null; then
+			$SERVE_BIN --config $SERVE_CNF &> $SERVE_LOG &
+			echo $! > "$SERVE_PID"
+		else
+			break
+		fi
+		sleep 1
+	done
 }
 
 # stop service
@@ -45,15 +67,3 @@ function stop_service(){
 	fi
 }
 
-# check service
-function status_service(){
-	if [ -f "$SERVE_PID" ]; then
-		PID=$(cat "$SERVE_PID")
-		if kill -0 "$PID" 2>/dev/null; then
-			return 0
-		else
-			rm -f "$SERVE_PID"
-			return 1
-		fi
-	fi
-}

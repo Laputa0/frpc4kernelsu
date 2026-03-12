@@ -5,5 +5,4 @@ if status_service &>/dev/null; then
 	sleep 2
 else
 	start_service
-	sleep 2
 fi
