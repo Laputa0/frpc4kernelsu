@@ -1,0 +1,9 @@
+id=frpc
+name=frpc for KernelSU
+version=1.0
+versionCode=10
+author=laputa
+description=frpc for KernelSU
+updateJson=https://raw.githubusercontent.com/Laputa0/frpc4kernelsu/refs/heads/main/update.json
+actionIcon=
+webuiIcon=webroot/logo.png
