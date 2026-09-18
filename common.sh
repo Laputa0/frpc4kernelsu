@@ -60,10 +60,10 @@ function stop_service(){
 	if kill -0 $PID 2>/dev/null; then
 		echo "stopping service..."
 		kill $PID
-		rm -f "SERVE_PID"
+		rm -f "$SERVE_PID"
 	else
 		echo "process is not found."
-		rm -f "SERVE_PID"
+		rm -f "$SERVE_PID"
 	fi
 }
 
